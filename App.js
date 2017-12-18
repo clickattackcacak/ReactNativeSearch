@@ -1,6 +1,6 @@
 /**
  * Sample React Native App
- * https://github.com/facebook/react-native
+ * https://github.com/clickattackcacak/ReactNativeSearch
  * @flow
  */
 
@@ -12,7 +12,8 @@ import {
   View,
   TextInput,
   ScrollView,
-  Image
+  Image,
+  Dimensions
 } from 'react-native';
 import RNFB from 'react-native-fetch-blob';
 
@@ -42,7 +43,7 @@ export default class App extends Component<{}> {
   }
 
   getDataFromNet() {
-    let netAPI = 'https://randomuser.me/api/?results=4000';
+    let netAPI = 'https://randomuser.me/api/?results=400';
     fetch(netAPI)
       .then((res) => res.json())
       .then((result) => {
@@ -64,24 +65,30 @@ export default class App extends Component<{}> {
     let rlt = [];
     if (data)
       return data.map(element =>
-        <View key={element.cell+element.email}>
+        <View key={element.cell + element.email}>
           <Image
             style={{ height: 72, width: 72, marginRight: 20 }}
             source={{ uri: element.picture.medium }}
-            key={element.cell+element.phone+element.email}
+            key={element.cell + element.phone + element.email}
           />
-          <Text style={{ paddingBottom: 15, fontSize: 20 }} key={element.phone+element.email}>{element.name.first} {element.name.last}</Text>
+          <Text style={{ paddingBottom: 15, fontSize: 20 }} key={element.phone + element.email}>{element.name.first} {element.name.last}</Text>
         </View>
       )
   }
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} onLayout={(event) => {
+        let { x, y, width, height } = event.nativeEvent.layout;
+        let  widthFULL = Dimensions.get('window').width;
+        let  heightFULL = Dimensions.get('window').height;
+        console.log('from layout ' + x,y,width, height);
+        console.log('from window ' + widthFULL, heightFULL);
+      }}>
         <Text style={styles.welcome}> Search {this.state.searchTxt}! </Text>
         {this.state.visibleSearch &&
           <TextInput onChangeText={(txt) => this.createResultList(txt)} placeholder=' >' />}
-        <ScrollView>
+        <ScrollView >
           {this.renderList(this.state.foundObjs)}
         </ScrollView>
       </View>
